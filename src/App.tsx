@@ -11,6 +11,7 @@ import Home from './pages/Home';
 import Play from './pages/Play';
 import History from './pages/History';
 import Library from './pages/Library';
+import Scoreboard from './pages/Scoreboard';
 import Settings from './pages/Settings';
 import BottomNav from './components/layout/BottomNav';
 
@@ -31,6 +32,7 @@ export default function App() {
           <Route path="/play/:domain" element={<Play />} />
           <Route path="/history" element={<History />} />
           <Route path="/library" element={<Library />} />
+          <Route path="/scoreboard" element={<Scoreboard />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

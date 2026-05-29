@@ -1,4 +1,4 @@
-import { Home, History, Library } from 'lucide-react';
+import { Home, History, Library, Trophy } from 'lucide-react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { clsx } from 'clsx';
 
@@ -14,6 +14,7 @@ export default function BottomNav() {
     { id: 'home', to: '/', icon: Home, label: 'Home' },
     { id: 'history', to: '/history', icon: History, label: 'History' },
     { id: 'library', to: '/library', icon: Library, label: 'Library' },
+    { id: 'scoreboard', to: '/scoreboard', icon: Trophy, label: 'Scores' },
   ];
 
   return (
