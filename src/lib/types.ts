@@ -16,7 +16,7 @@ export type FoodOption = {
 export type WatchItem = {
   id: string;
   title: string;
-  type: 'movie' | 'show';
+  type: 'movie' | 'show' | 'movie / show';
   genre: string;
   posterUrl?: string;
   active: boolean;

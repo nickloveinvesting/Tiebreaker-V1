@@ -93,55 +93,65 @@ export default function ComputePhase({
          </motion.div>
       )}
 
-      {matches.length !== 1 && (
-         <div className="mt-8 shrink-0 pb-12 w-full max-w-sm mx-auto">
-            {isMacro || matches.length === 0 ? (
-               <button 
-                  onClick={() => onNext()}
-                  className="w-full py-6 mt-4 border-[4px] border-ink bg-white font-black text-xl uppercase tracking-wider rounded-[24px] shadow-[8px_8px_0_0_#1A1A1A] hover:translate-x-1 hover:translate-y-1 hover:shadow-none active:translate-y-2 active:translate-x-2 active:shadow-none transition-all"
-               >
-                 {matches.length > 0 ? "Show Items" : "Continue"}
-               </button>
-            ) : (
-               <>
-                <h3 className="font-display font-black text-2xl mb-4 text-center">Solve it with a game</h3>
-                
-                <div className="flex flex-col gap-3">
-                   <button 
-                      onClick={() => setSelectedGame('connect4')}
-                      className={clsx("flex items-center gap-4 p-4 border-[4px] border-ink rounded-[24px] transition-all text-left group", selectedGame === 'connect4' ? 'bg-coral shadow-[6px_6px_0_0_#1A1A1A] translate-x-[2px] translate-y-[2px]' : 'bg-white hover:bg-black/5 opacity-70')}
-                   >
-                     <Grid3X3 size={32} className={clsx(selectedGame === 'connect4' ? 'text-ink' : 'text-ink')} />
-                     <span className="font-display font-black text-xl">Connect 4</span>
-                   </button>
-                   <button 
-                      onClick={() => setSelectedGame('wordle')}
-                      className={clsx("flex items-center gap-4 p-4 border-[4px] border-ink rounded-[24px] transition-all text-left group", selectedGame === 'wordle' ? 'bg-teal shadow-[6px_6px_0_0_#1A1A1A] translate-x-[2px] translate-y-[2px]' : 'bg-white hover:bg-black/5 opacity-70')}
-                   >
-                     <Type size={32} className={clsx(selectedGame === 'wordle' ? 'text-ink' : 'text-ink')} />
-                     <span className="font-display font-black text-xl">Wordle (1v1)</span>
-                   </button>
-                   <button 
-                      onClick={() => setSelectedGame('trivia')}
-                      className={clsx("flex items-center gap-4 p-4 border-[4px] border-ink rounded-[24px] transition-all text-left group", selectedGame === 'trivia' ? 'bg-[#FFEB3B] shadow-[6px_6px_0_0_#1A1A1A] translate-x-[2px] translate-y-[2px]' : 'bg-white hover:bg-black/5 opacity-70')}
-                   >
-                     <TriviaIcon size={32} className={clsx(selectedGame === 'trivia' ? 'text-ink' : 'text-ink')} />
-                     <span className="font-display font-black text-xl">Tossup Trivia</span>
-                   </button>
-                </div>
-               </>
-            )}
-         </div>
-      )}
+      <div className="mt-8 shrink-0 pb-12 w-full max-w-sm mx-auto">
+         {isMacro ? (
+            <button 
+               onClick={() => onNext()}
+               className="w-full py-6 mt-4 border-[4px] border-ink bg-white font-black text-xl uppercase tracking-wider rounded-[24px] shadow-[8px_8px_0_0_#1A1A1A] hover:translate-x-1 hover:translate-y-1 hover:shadow-none active:translate-y-2 active:translate-x-2 active:shadow-none transition-all mb-8 max-w-sm mx-auto"
+            >
+              {matches.length > 0 ? "Continue" : "Restart"}
+            </button>
+         ) : matches.length === 0 ? (
+            <button 
+               onClick={() => onNext()}
+               className="w-full py-6 mt-4 border-[4px] border-ink bg-white font-black text-xl uppercase tracking-wider rounded-[24px] shadow-[8px_8px_0_0_#1A1A1A] hover:translate-x-1 hover:translate-y-1 hover:shadow-none active:translate-y-2 active:translate-x-2 active:shadow-none transition-all"
+            >
+              Restart
+            </button>
+         ) : matches.length === 1 ? (
+             <button 
+               onClick={() => onNext()}
+               className="w-full mt-auto py-6 bg-ink text-cream font-black text-xl uppercase tracking-wider rounded-[24px] border-[4px] border-ink shadow-[8px_8px_0_0_#1A1A1A] hover:translate-x-1 hover:translate-y-1 hover:shadow-none active:translate-y-2 active:translate-x-2 active:shadow-none transition-all mb-8 max-w-sm mx-auto"
+             >
+               Continue
+             </button>
+         ) : (
+            <>
+             <h3 className="font-display font-black text-2xl mb-4 text-center">Solve it with a game</h3>
+             
+             <div className="flex flex-col gap-3 mb-8">
+                <button 
+                   onClick={() => setSelectedGame('connect4')}
+                   className={clsx("flex items-center gap-4 p-4 border-[4px] border-ink rounded-[24px] transition-all text-left group", selectedGame === 'connect4' ? 'bg-coral shadow-[6px_6px_0_0_#1A1A1A] translate-x-[2px] translate-y-[2px]' : 'bg-white hover:bg-black/5 opacity-70')}
+                >
+                  <Grid3X3 size={32} className={clsx(selectedGame === 'connect4' ? 'text-ink' : 'text-ink')} />
+                  <span className="font-display font-black text-xl">Connect 4</span>
+                </button>
+                <button 
+                   onClick={() => setSelectedGame('wordle')}
+                   className={clsx("flex items-center gap-4 p-4 border-[4px] border-ink rounded-[24px] transition-all text-left group", selectedGame === 'wordle' ? 'bg-teal shadow-[6px_6px_0_0_#1A1A1A] translate-x-[2px] translate-y-[2px]' : 'bg-white hover:bg-black/5 opacity-70')}
+                >
+                  <Type size={32} className={clsx(selectedGame === 'wordle' ? 'text-ink' : 'text-ink')} />
+                  <span className="font-display font-black text-xl">Wordle (1v1)</span>
+                </button>
+                <button 
+                   onClick={() => setSelectedGame('trivia')}
+                   className={clsx("flex items-center gap-4 p-4 border-[4px] border-ink rounded-[24px] transition-all text-left group", selectedGame === 'trivia' ? 'bg-[#FFEB3B] shadow-[6px_6px_0_0_#1A1A1A] translate-x-[2px] translate-y-[2px]' : 'bg-white hover:bg-black/5 opacity-70')}
+                >
+                  <TriviaIcon size={32} className={clsx(selectedGame === 'trivia' ? 'text-ink' : 'text-ink')} />
+                  <span className="font-display font-black text-xl">Tossup Trivia</span>
+                </button>
+             </div>
 
-      {(!isMacro && matches.length > 0) && (
-          <button 
-            onClick={() => onNext(matches.length === 1 ? undefined : selectedGame)}
-            className="w-full mt-auto py-6 bg-ink text-cream font-black text-xl uppercase tracking-wider rounded-[24px] border-[4px] border-ink shadow-[8px_8px_0_0_#1A1A1A] hover:translate-x-1 hover:translate-y-1 hover:shadow-none active:translate-y-2 active:translate-x-2 active:shadow-none transition-all mb-8 shrink-0 max-w-sm mx-auto"
-          >
-            {matches.length === 1 ? 'Continue' : `Play ${selectedGame === 'connect4' ? 'Connect 4' : selectedGame === 'wordle' ? 'Wordle' : 'Trivia'}`}
-          </button>
-      )}
+             <button 
+               onClick={() => onNext(selectedGame)}
+               className="w-full mt-auto py-6 bg-ink text-cream font-black text-xl uppercase tracking-wider rounded-[24px] border-[4px] border-ink shadow-[8px_8px_0_0_#1A1A1A] hover:translate-x-1 hover:translate-y-1 hover:shadow-none active:translate-y-2 active:translate-x-2 active:shadow-none transition-all max-w-sm mx-auto"
+             >
+               Play {selectedGame === 'connect4' ? 'Connect 4' : selectedGame === 'wordle' ? 'Wordle' : 'Trivia'}
+             </button>
+            </>
+         )}
+      </div>
     </motion.div>
   );
 }

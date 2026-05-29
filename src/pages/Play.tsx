@@ -114,7 +114,7 @@ export default function Play() {
       return genres.map(g => ({
         id: `__cat__${g}`,
         title: g,
-        type: 'show',
+        type: 'movie / show',
         genre: g,
         posterUrl: '🍿',
         active: true
