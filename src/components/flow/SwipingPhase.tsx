@@ -11,6 +11,7 @@ export default function SwipingPhase({
   deck, 
   options, 
   onSwipe, 
+  onUndo,
   onComplete 
 }: { 
   playerId: string;

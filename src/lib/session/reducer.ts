@@ -2,59 +2,126 @@ import { SessionState, SessionAction } from './types';
 
 export function sessionReducer(state: SessionState, action: SessionAction): SessionState {
   switch (action.type) {
-    case 'START_SWIPE_P1':
+    case 'START_MACRO_P1':
       return { 
         ...state, 
-        phase: 'SWIPE_P1', 
-        deck: action.deck,
-        eatMode: action.eatMode,
-        swipes: {},
+        phase: 'SWIPE_MACRO_P1', 
+        macroDeck: action.deck,
+        eatMode: action.eatMode !== undefined ? action.eatMode : state.eatMode,
+        macroSwipes: {},
       };
-    case 'SWIPE':
+    case 'SWIPE_MACRO':
       return {
         ...state,
-        swipes: {
-          ...state.swipes,
+        macroSwipes: {
+          ...state.macroSwipes,
           [action.playerId]: {
-            ...state.swipes[action.playerId],
+            ...(state.macroSwipes?.[action.playerId] || {}),
             [action.optionId]: action.vote
           }
         }
       };
-    case 'UNDO_SWIPE':
-      const playerSwipes = { ...(state.swipes[action.playerId] || {}) };
+    case 'UNDO_MACRO': {
+      const playerSwipes = { ...(state.macroSwipes?.[action.playerId] || {}) };
       delete playerSwipes[action.optionId];
       return {
         ...state,
-        swipes: {
-          ...state.swipes,
+        macroSwipes: {
+          ...state.macroSwipes,
           [action.playerId]: playerSwipes
         }
       };
+    }
+    case 'COMPUTE_MACRO_MATCHES':
+      return { ...state, macroMatches: action.matches, phase: 'COMPUTE_MACRO' };
+
+    case 'START_MICRO_P1':
+    case 'START_NEXT_MICRO':
+      return {
+        ...state,
+        phase: 'SWIPE_MICRO_P1',
+        microDeck: action.deck,
+        remainingMicroPool: action.remainingPool,
+        microSwipes: {},
+      };
+      
+    case 'SWIPE_MICRO':
+      return {
+        ...state,
+        microSwipes: {
+          ...state.microSwipes,
+          [action.playerId]: {
+            ...(state.microSwipes?.[action.playerId] || {}),
+            [action.optionId]: action.vote
+          }
+        }
+      };
+      
+    case 'UNDO_MICRO': {
+      const playerSwipes = { ...(state.microSwipes?.[action.playerId] || {}) };
+      delete playerSwipes[action.optionId];
+      return {
+        ...state,
+        microSwipes: {
+          ...state.microSwipes,
+          [action.playerId]: playerSwipes
+        }
+      };
+    }
+      
+    case 'COMPUTE_MICRO_MATCHES':
+      return { ...state, microMatches: action.matches, phase: 'COMPUTE_MICRO' };
+
+    case 'RESTART':
+      return {
+        ...state,
+        phase: 'CONFIGURE',
+        macroSwipes: {},
+        microSwipes: {},
+        macroDeck: [],
+        microDeck: [],
+        remainingMicroPool: [],
+        matches: [],
+        macroMatches: [],
+        microMatches: [],
+        winnerId: undefined,
+        finalPick: undefined,
+        candidateSet: []
+      };
+
     case 'NEXT_PHASE':
-      if (state.phase === 'SWIPE_P1') return { ...state, phase: 'HANDOFF' };
-      if (state.phase === 'HANDOFF') return { ...state, phase: 'SWIPE_P2' };
-      if (state.phase === 'SWIPE_P2') return { ...state, phase: 'COMPUTE' };
-      if (state.phase === 'COMPUTE') {
-        if (state.matches.length === 1) return { ...state, phase: 'RESULT_SINGLE', finalPick: state.matches[0] };
-        // We shouldn't automatically transition to GAME for length != 1 anymore without SELECT_GAME
-        // But for fallback:
+      if (state.phase === 'SWIPE_MACRO_P1') return { ...state, phase: 'HANDOFF_MACRO' };
+      if (state.phase === 'HANDOFF_MACRO') return { ...state, phase: 'SWIPE_MACRO_P2' };
+      if (state.phase === 'SWIPE_MICRO_P1') return { ...state, phase: 'HANDOFF_MICRO' };
+      if (state.phase === 'HANDOFF_MICRO') return { ...state, phase: 'SWIPE_MICRO_P2' };
+      
+      if (state.phase === 'COMPUTE_MACRO') {
+        // Assume external logic triggers start micro or restart
+        return state;
+      }
+      
+      if (state.phase === 'COMPUTE_MICRO') {
+        if (state.microMatches && state.microMatches.length === 1) {
+          return { ...state, phase: 'RESULT_SINGLE', finalPick: state.microMatches[0] };
+        }
+        if (state.microMatches && state.microMatches.length === 0) {
+          return { ...state, phase: 'RESULT_NO_MATCH' };
+        }
         return { ...state, phase: 'GAME' };
       }
+      
       if (state.phase === 'RESULT_SINGLE') return { ...state, phase: 'FINAL' };
       if (state.phase === 'GAME') return { ...state, phase: 'GAME_PLAY' };
-      if (state.phase === 'GAME_PLAY') return { ...state, phase: 'GAME_RESULT' }; // Not directly used usually
+      if (state.phase === 'GAME_PLAY') return { ...state, phase: 'GAME_RESULT' }; 
       if (state.phase === 'GAME_RESULT') return { ...state, phase: 'FINAL' };
       if (state.phase === 'FINAL') return { ...state, phase: 'DONE' };
       return state;
-    case 'START_P2_SWIPING':
-      return { ...state, phase: 'SWIPE_P2' };
-    case 'COMPUTE_MATCHES':
-      return { ...state, matches: action.matches, phase: 'COMPUTE' };
-    case 'START_GAME':
-      return { ...state, candidateSet: action.candidateSet, phase: 'GAME' };
+
+    case 'START_P2_MICRO_SWIPING':
+      return { ...state, phase: 'SWIPE_MICRO_P2' };
+
     case 'SELECT_GAME':
-      return { ...state, gamePlayed: action.game, candidateSet: state.matches.length > 1 ? state.matches : state.deck, phase: 'GAME', gameRound: 1 };
+      return { ...state, gamePlayed: action.game, candidateSet: action.candidateSet, phase: 'GAME', gameRound: 1 };
     case 'GAME_OVER':
       return { ...state, winnerId: action.winnerId, phase: 'GAME_RESULT' };
     case 'GAME_DRAW':

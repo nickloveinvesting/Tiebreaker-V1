@@ -17,6 +17,7 @@ export type WatchItem = {
   id: string;
   title: string;
   type: 'movie' | 'show';
+  genre: string;
   posterUrl?: string;
   active: boolean;
 };

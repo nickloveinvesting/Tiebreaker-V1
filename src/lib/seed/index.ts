@@ -3,8 +3,8 @@ import { Player, FoodOption, WatchItem } from '../types';
 import { storeInstance } from '../store';
 
 const SEED_PLAYERS: Player[] = [
-  { id: uuidv4(), name: 'Player 1', color: '#FF5A47' }, // Coral
-  { id: uuidv4(), name: 'Player 2', color: '#1FB8A6' }, // Teal
+  { id: uuidv4(), name: 'Lexi', color: '#FF5A47' }, // Coral
+  { id: uuidv4(), name: 'Nick', color: '#1FB8A6' }, // Teal
 ];
 
 const SEED_FOOD: FoodOption[] = [
@@ -63,28 +63,28 @@ const SEED_FOOD: FoodOption[] = [
 ];
 
 const SEED_WATCH: WatchItem[] = [
-  { id: uuidv4(), title: 'The Bear', type: 'show', posterUrl: '🐻', active: true },
-  { id: uuidv4(), title: 'Dune', type: 'movie', posterUrl: '🏜️', active: true },
-  { id: uuidv4(), title: 'Severance', type: 'show', posterUrl: '🏢', active: true },
-  { id: uuidv4(), title: 'Everything Everywhere', type: 'movie', posterUrl: '🥯', active: true },
-  { id: uuidv4(), title: 'Stranger Things', type: 'show', posterUrl: '🚲', active: true },
-  { id: uuidv4(), title: 'Spider-Verse', type: 'movie', posterUrl: '🕷️', active: true },
-  { id: uuidv4(), title: 'Succession', type: 'show', posterUrl: '📈', active: true },
-  { id: uuidv4(), title: 'Knives Out', type: 'movie', posterUrl: '🗡️', active: true },
-  { id: uuidv4(), title: 'The Office', type: 'show', posterUrl: '🖨️', active: true },
-  { id: uuidv4(), title: 'Parasite', type: 'movie', posterUrl: '🏠', active: true },
-  { id: uuidv4(), title: 'White Lotus', type: 'show', posterUrl: '🌺', active: true },
-  { id: uuidv4(), title: 'Mad Max', type: 'movie', posterUrl: '🚗', active: true },
-  { id: uuidv4(), title: 'Breaking Bad', type: 'show', posterUrl: '⚗️', active: true },
-  { id: uuidv4(), title: 'Interstellar', type: 'movie', posterUrl: '🚀', active: true },
-  { id: uuidv4(), title: 'Game of Thrones', type: 'show', posterUrl: '🐉', active: true },
-  { id: uuidv4(), title: 'Avengers', type: 'movie', posterUrl: '🛡️', active: true },
-  { id: uuidv4(), title: 'The Matrix', type: 'movie', posterUrl: '💊', active: true },
-  { id: uuidv4(), title: 'Friends', type: 'show', posterUrl: '☕', active: true },
-  { id: uuidv4(), title: 'Inception', type: 'movie', posterUrl: '🌀', active: true },
-  { id: uuidv4(), title: 'The Sopranos', type: 'show', posterUrl: '🚬', active: true },
-  { id: uuidv4(), title: 'Spirited Away', type: 'movie', posterUrl: '🐉', active: true },
-  { id: uuidv4(), title: 'Better Call Saul', type: 'show', posterUrl: '⚖️', active: true }
+  { id: uuidv4(), title: 'The Bear', type: 'show', genre: 'Drama', posterUrl: '🐻', active: true },
+  { id: uuidv4(), title: 'Dune', type: 'movie', genre: 'Sci-Fi', posterUrl: '🏜️', active: true },
+  { id: uuidv4(), title: 'Severance', type: 'show', genre: 'Thriller', posterUrl: '🏢', active: true },
+  { id: uuidv4(), title: 'Everything Everywhere', type: 'movie', genre: 'Action', posterUrl: '🥯', active: true },
+  { id: uuidv4(), title: 'Stranger Things', type: 'show', genre: 'Horror / Sci-Fi', posterUrl: '🚲', active: true },
+  { id: uuidv4(), title: 'Spider-Verse', type: 'movie', genre: 'Animation', posterUrl: '🕷️', active: true },
+  { id: uuidv4(), title: 'Succession', type: 'show', genre: 'Drama', posterUrl: '📈', active: true },
+  { id: uuidv4(), title: 'Knives Out', type: 'movie', genre: 'Mystery', posterUrl: '🗡️', active: true },
+  { id: uuidv4(), title: 'The Office', type: 'show', genre: 'Comedy', posterUrl: '🖨️', active: true },
+  { id: uuidv4(), title: 'Parasite', type: 'movie', genre: 'Thriller', posterUrl: '🏠', active: true },
+  { id: uuidv4(), title: 'White Lotus', type: 'show', genre: 'Comedy', posterUrl: '🌺', active: true },
+  { id: uuidv4(), title: 'Mad Max', type: 'movie', genre: 'Action', posterUrl: '🚗', active: true },
+  { id: uuidv4(), title: 'Breaking Bad', type: 'show', genre: 'Drama', posterUrl: '⚗️', active: true },
+  { id: uuidv4(), title: 'Interstellar', type: 'movie', genre: 'Sci-Fi', posterUrl: '🚀', active: true },
+  { id: uuidv4(), title: 'Game of Thrones', type: 'show', genre: 'Fantasy', posterUrl: '🐉', active: true },
+  { id: uuidv4(), title: 'Avengers', type: 'movie', genre: 'Action', posterUrl: '🛡️', active: true },
+  { id: uuidv4(), title: 'The Matrix', type: 'movie', genre: 'Sci-Fi', posterUrl: '💊', active: true },
+  { id: uuidv4(), title: 'Friends', type: 'show', genre: 'Comedy', posterUrl: '☕', active: true },
+  { id: uuidv4(), title: 'Inception', type: 'movie', genre: 'Action', posterUrl: '🌀', active: true },
+  { id: uuidv4(), title: 'The Sopranos', type: 'show', genre: 'Drama', posterUrl: '🚬', active: true },
+  { id: uuidv4(), title: 'Spirited Away', type: 'movie', genre: 'Animation', posterUrl: '🐉', active: true },
+  { id: uuidv4(), title: 'Better Call Saul', type: 'show', genre: 'Drama', posterUrl: '⚖️', active: true }
 ];
 
 export async function checkAndSeedData() {
@@ -92,6 +92,17 @@ export async function checkAndSeedData() {
   if (!hasData) {
     await storeInstance.seedInitialData(SEED_PLAYERS, SEED_FOOD, SEED_WATCH);
   } else {
+    // Overwrite existing players if they are still "Player 1/2"
+    const players = await storeInstance.getPlayers();
+    if (players.length >= 2 && players[0].name === 'Player 1') {
+       players[0].name = 'Lexi';
+       await storeInstance.updatePlayer(players[0]);
+    }
+    if (players.length >= 2 && players[1].name === 'Player 2') {
+       players[1].name = 'Nick';
+       await storeInstance.updatePlayer(players[1]);
+    }
+
     // Append any new hardcoded seeds if they aren't there for existing users
     const existingFood = await storeInstance.getFoodOptions();
     for (const food of SEED_FOOD) {

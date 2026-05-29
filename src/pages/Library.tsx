@@ -111,6 +111,7 @@ export default function Library() {
         id: 'watch_' + Date.now(),
         title: newName,
         posterUrl: newEmoji,
+        genre: 'General',
         type: isMovie ? 'movie' : 'show',
         active: true
       };
