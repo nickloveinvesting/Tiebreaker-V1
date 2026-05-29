@@ -59,8 +59,12 @@ export default function ComputePhase({
                    <div className="absolute -top-3 -left-3 w-8 h-8 bg-coral text-white font-black flex items-center justify-center rounded-full border-[3px] border-ink shadow-[2px_2px_0_0_#1A1A1A] rotate-[-10deg]">
                      {idx + 1}
                    </div>
-                   <div className="text-4xl bg-cream w-16 h-16 flex items-center justify-center rounded-[16px] border-[4px] border-ink shadow-[4px_4px_0_0_#1A1A1A]">
-                      {'emoji' in item ? (item as FoodOption).emoji : (item as WatchItem).posterUrl}
+                   <div className="text-4xl bg-cream w-16 h-16 flex items-center justify-center rounded-[16px] border-[4px] border-ink shadow-[4px_4px_0_0_#1A1A1A] overflow-hidden">
+                      {(() => {
+                         const visual = 'emoji' in item ? (item as FoodOption).emoji : (item as WatchItem).posterUrl;
+                         if (visual?.startsWith('http')) return <img src={visual} className="w-full h-full object-cover" />;
+                         return visual;
+                      })()}
                    </div>
                    <div className="flex flex-col text-left">
                       <span className="font-display font-black text-2xl leading-tight tracking-tight">{'title' in item ? (item as WatchItem).title : (item as FoodOption).name}</span>

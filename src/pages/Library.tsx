@@ -3,7 +3,7 @@ import { store } from '../lib/store';
 import { FoodOption, WatchItem } from '../lib/types';
 import AppHeader from '../components/layout/AppHeader';
 import { clsx } from 'clsx';
-import { Check, Plus, X } from 'lucide-react';
+import { Check, Plus, X, Navigation, Film } from 'lucide-react';
 
 export default function Library() {
   const [tab, setTab] = useState<'eat' | 'watch'>('eat');
@@ -14,6 +14,8 @@ export default function Library() {
   const [newName, setNewName] = useState('');
   const [newEmoji, setNewEmoji] = useState('');
   const [newDetail, setNewDetail] = useState('');
+  
+  const [loadingLive, setLoadingLive] = useState(false);
 
   useEffect(() => {
     async function load() {
@@ -33,6 +35,59 @@ export default function Library() {
     const updated = { ...item, active: !item.active };
     await store.updateWatchItem(updated);
     setWatch(watch.map(w => w.id === item.id ? updated : w));
+  };
+
+  const fetchLiveFood = () => {
+    if (!navigator.geolocation) {
+      alert("Geolocation is not supported by your browser.");
+      return;
+    }
+    setLoadingLive(true);
+    navigator.geolocation.getCurrentPosition(async (pos) => {
+      try {
+        const res = await fetch(`/api/places/nearby?lat=${pos.coords.latitude}&lng=${pos.coords.longitude}`);
+        const data = await res.json();
+        if (data.error) throw new Error(data.error);
+        
+        let currentFood = [...food];
+        for (const item of data) {
+           if (!currentFood.find(f => f.id === item.id)) {
+             await store.addFoodOption(item);
+             currentFood.push(item);
+           }
+        }
+        setFood(currentFood);
+      } catch (err: any) {
+        alert("Failed to fetch restaurants: " + err.message);
+      } finally {
+        setLoadingLive(false);
+      }
+    }, (err) => {
+      setLoadingLive(false);
+      alert("Failed to get location: " + err.message);
+    });
+  };
+
+  const fetchLiveWatch = async () => {
+    setLoadingLive(true);
+    try {
+      const res = await fetch(`/api/tmdb/trending`);
+      const data = await res.json();
+      if (data.error) throw new Error(data.error);
+      
+      let currentWatch = [...watch];
+      for (const item of data) {
+         if (!currentWatch.find(w => w.id === item.id)) {
+           await store.addWatchItem(item);
+           currentWatch.push(item);
+         }
+      }
+      setWatch(currentWatch);
+    } catch (err: any) {
+      alert("Failed to fetch movies/shows: " + err.message);
+    } finally {
+      setLoadingLive(false);
+    }
   };
 
   const handleAdd = async (e: React.FormEvent) => {
@@ -91,11 +146,38 @@ export default function Library() {
       <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-3 bg-white border-t-[3px] border-ink w-full relative">
         <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(#1A1A1A22_1px,transparent_1px)] [background-size:16px_16px] opacity-20 pointer-events-none" />
 
+        {tab === 'eat' && (
+           <div className="relative z-10 flex justify-center mb-2">
+             <button
+               onClick={fetchLiveFood}
+               disabled={loadingLive}
+               className="flex items-center gap-2 px-6 py-3 bg-coral text-ink border-[3px] border-ink rounded-[16px] shadow-[4px_4px_0_0_#1A1A1A] hover:translate-y-[2px] hover:translate-x-[2px] hover:shadow-[2px_2px_0_0_#1A1A1A] transition-all font-black uppercase tracking-widest text-xs disabled:opacity-50"
+             >
+               <Navigation size={16} strokeWidth={3} />
+               {loadingLive ? 'Scanning...' : 'Find Restaurants Near Me'}
+             </button>
+           </div>
+        )}
+        
+        {tab === 'watch' && (
+           <div className="relative z-10 flex justify-center mb-2">
+             <button
+               onClick={fetchLiveWatch}
+               disabled={loadingLive}
+               className="flex items-center gap-2 px-6 py-3 bg-teal text-white border-[3px] border-ink rounded-[16px] shadow-[4px_4px_0_0_#1A1A1A] hover:translate-y-[2px] hover:translate-x-[2px] hover:shadow-[2px_2px_0_0_#1A1A1A] transition-all font-black uppercase tracking-widest text-xs disabled:opacity-50 text-ink"
+             >
+               <Film size={16} strokeWidth={3} className="text-ink" />
+               <span className="text-ink">{loadingLive ? 'Syncing...' : 'Trending on Netflix/Hulu/HBO'}</span>
+             </button>
+           </div>
+        )}
         
         {tab === 'eat' && food.map(f => (
           <div key={f.id} className="relative z-10 flex items-center justify-between p-3 border-[3px] border-ink rounded-[24px] bg-white shadow-[4px_4px_0_0_#1A1A1A]">
             <div className="flex items-center gap-3">
-              <div className="text-3xl bg-cream w-12 h-12 flex items-center justify-center rounded-[12px] border-[3px] border-ink shadow-[2px_2px_0_0_#1A1A1A]">{f.emoji}</div>
+               <div className="text-3xl bg-cream w-12 h-12 flex items-center justify-center rounded-[12px] border-[3px] border-ink shadow-[2px_2px_0_0_#1A1A1A] overflow-hidden">
+                 {f.emoji?.startsWith('http') ? <img src={f.emoji} className="w-full h-full object-cover" /> : f.emoji}
+               </div>
               <div className="flex flex-col">
                 <span className={clsx("font-display font-black text-lg leading-tight transition-opacity tracking-tight", !f.active && "opacity-40 line-through")}>{f.name}</span>
                 <span className="text-[10px] uppercase font-black text-ink/50 tracking-widest">{f.cuisine} • {f.mode}</span>
@@ -113,7 +195,9 @@ export default function Library() {
         {tab === 'watch' && watch.map(w => (
           <div key={w.id} className="relative z-10 flex items-center justify-between p-3 border-[3px] border-ink rounded-[24px] bg-white shadow-[4px_4px_0_0_#1A1A1A]">
             <div className="flex items-center gap-3">
-              <div className="text-3xl bg-cream w-12 h-12 flex items-center justify-center rounded-[12px] border-[3px] border-ink shadow-[2px_2px_0_0_#1A1A1A]">{w.posterUrl}</div>
+              <div className="text-3xl bg-cream w-12 h-12 flex items-center justify-center rounded-[12px] border-[3px] border-ink shadow-[2px_2px_0_0_#1A1A1A] overflow-hidden">
+                {w.posterUrl?.startsWith('http') ? <img src={w.posterUrl} className="w-full h-full object-cover" /> : w.posterUrl}
+              </div>
               <div className="flex flex-col">
                 <span className={clsx("font-display font-black text-lg leading-tight transition-opacity tracking-tight", !w.active && "opacity-40 line-through")}>{w.title}</span>
                 <span className="text-[10px] uppercase font-black text-ink/50 tracking-widest">{w.type}</span>

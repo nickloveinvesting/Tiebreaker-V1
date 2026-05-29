@@ -51,16 +51,27 @@ export default function SwipeCard({
       onDragEnd={handleDragEnd}
       style={{ x, rotate, opacity }}
       animate={controls}
-      className="absolute top-0 left-0 w-full aspect-[3/4] max-h-[60vh] bg-white border-[4px] border-ink rounded-[32px] shadow-[12px_12px_0_0_#1A1A1A] p-6 flex flex-col items-center justify-center cursor-grab active:cursor-grabbing origin-bottom"
+      className="absolute top-0 left-0 w-full aspect-[3/4] max-h-[60vh] bg-white border-[4px] border-ink rounded-[32px] shadow-[12px_12px_0_0_#1A1A1A] overflow-hidden flex flex-col items-center justify-center cursor-grab active:cursor-grabbing origin-bottom"
     >
-      <div className="text-[120px] mb-8 select-none pointer-events-none">
-        {'emoji' in item ? (item as FoodOption).emoji : (item as WatchItem).posterUrl}
-      </div>
-      <h3 className="font-display font-black text-4xl text-center leading-tight mb-2 select-none pointer-events-none tracking-tighter">
-        {'title' in item ? (item as WatchItem).title : (item as FoodOption).name}
-      </h3>
-      <div className="uppercase font-black tracking-widest text-ink/50 text-sm select-none pointer-events-none">
-        {'cuisine' in item ? (item as FoodOption).cuisine : (item as WatchItem).type}
+      <div className="absolute inset-0 flex flex-col items-center p-6 h-full text-center">
+        <div className="flex-1 flex flex-col justify-center items-center w-full min-h-[50%] relative mb-4">
+          {(() => {
+            const visual = 'emoji' in item ? (item as FoodOption).emoji : (item as WatchItem).posterUrl;
+            if (visual?.startsWith('http')) {
+               return <img src={visual} referrerPolicy="no-referrer" className="w-full h-full object-contain rounded-xl select-none pointer-events-none" alt="" />;
+            }
+            return <div className="text-[120px] select-none pointer-events-none">{visual}</div>;
+          })()}
+        </div>
+        
+        <div className="flex flex-col items-center justify-end pb-8 shrink-0 relative z-10 w-full bg-white/80 backdrop-blur-sm rounded-2xl p-4">
+          <h3 className="font-display font-black text-4xl text-center leading-tight mb-2 select-none pointer-events-none tracking-tighter">
+            {'title' in item ? (item as WatchItem).title : (item as FoodOption).name}
+          </h3>
+          <div className="uppercase font-black tracking-widest text-ink/50 text-sm select-none pointer-events-none">
+            {'cuisine' in item ? (item as FoodOption).cuisine : (item as WatchItem).type}
+          </div>
+        </div>
       </div>
 
       <motion.div 
