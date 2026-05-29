@@ -22,6 +22,7 @@ export type SessionState = {
   eatMode?: 'cook' | 'out'; // If eat
   candidateSet?: string[]; // The items they are picking from after the game
   gamePlayed?: 'connect4' | 'wordle' | 'trivia';
+  gameRound?: number;
 };
 
 export type SessionAction =
@@ -34,5 +35,6 @@ export type SessionAction =
   | { type: 'SELECT_GAME'; game: 'connect4' | 'wordle' | 'trivia' }
   | { type: 'GAME_OVER'; winnerId: string }
   | { type: 'GAME_DRAW' }
+  | { type: 'UNDO_SWIPE'; playerId: string; optionId: string }
   | { type: 'SET_FINAL_PICK'; optionId: string }
   | { type: 'FINISH' };

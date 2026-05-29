@@ -7,6 +7,7 @@ import { SessionState, SessionAction } from '../lib/session/types';
 import { buildFoodDeck, buildWatchDeck } from '../lib/session/deckBuilder';
 import { v4 as uuidv4 } from 'uuid';
 import AppHeader from '../components/layout/AppHeader';
+import confetti from 'canvas-confetti';
 
 import ConfigurePhase from '../components/flow/ConfigurePhase';
 import SwipingPhase from '../components/flow/SwipingPhase';
@@ -52,6 +53,19 @@ export default function Play() {
     }
   }, [domain, options, state.phase]);
 
+  useEffect(() => {
+    if (state.phase === 'GAME_RESULT') {
+       const wColor = players.find(p => p.id === state.winnerId)?.color || '#1A1A1A';
+       confetti({
+          particleCount: 150,
+          spread: 80,
+          origin: { y: 0.6 },
+          colors: [wColor, '#ffffff', '#1A1A1A'],
+          disableForReducedMotion: true
+       });
+    }
+  }, [state.phase, state.winnerId, players]);
+
   const handleConfigureEat = (mode: 'cook' | 'out') => {
     const deck = buildFoodDeck(options as FoodOption[], mode, pastDecisions);
     dispatch({ type: 'START_SWIPE_P1', deck, eatMode: mode });
@@ -96,6 +110,7 @@ export default function Play() {
             options={options}
             onComplete={() => dispatch({ type: 'NEXT_PHASE' })}
             onSwipe={(id, vote) => dispatch({ type: 'SWIPE', playerId: players[0]?.id, optionId: id, vote })}
+            onUndo={(id) => dispatch({ type: 'UNDO_SWIPE', playerId: players[0]?.id, optionId: id })}
           />
         )}
 
@@ -122,6 +137,7 @@ export default function Play() {
               dispatch({ type: 'COMPUTE_MATCHES', matches });
             }}
             onSwipe={(id, vote) => dispatch({ type: 'SWIPE', playerId: players[1]?.id, optionId: id, vote })}
+            onUndo={(id) => dispatch({ type: 'UNDO_SWIPE', playerId: players[1]?.id, optionId: id })}
           />
         )}
 
@@ -151,6 +167,7 @@ export default function Play() {
 
         {state.phase === 'GAME' && (
            <GamePhase 
+             key={state.gameRound}
              gamePlayed={state.gamePlayed}
              players={players}
              onGameOver={(winnerId) => dispatch({ type: 'GAME_OVER', winnerId })}

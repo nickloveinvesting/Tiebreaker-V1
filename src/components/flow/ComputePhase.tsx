@@ -47,13 +47,29 @@ export default function ComputePhase({
       </div>
       
       {matches.length > 0 && (
-         <div className="flex flex-col gap-4 mb-10 shrink-0 select-none pointer-events-none">
+         <motion.div 
+            initial="hidden"
+            animate="visible"
+            variants={{
+               hidden: {},
+               visible: {
+                  transition: { staggerChildren: 0.3 } // More noticeable stagger
+               }
+            }}
+            className="flex flex-col gap-4 mb-10 shrink-0 select-none pointer-events-none"
+         >
             {matchedItems.map((item, idx) => (
                 <motion.div 
                    key={item.id} 
-                   initial={{ scale: 0.8, opacity: 0, y: 20 }}
-                   animate={{ scale: 1, opacity: 1, y: 0 }}
-                   transition={{ delay: idx * 0.15, type: 'spring', bounce: 0.6 }}
+                   variants={{
+                      hidden: { scale: 0.5, opacity: 0, y: 50 },
+                      visible: { 
+                         scale: 1, 
+                         opacity: 1, 
+                         y: 0,
+                         transition: { type: 'spring', bounce: 0.7, duration: 0.8 }
+                      }
+                   }}
                    className="flex relative items-center gap-4 p-4 bg-white border-[4px] border-ink rounded-[24px] shadow-[6px_6px_0_0_#1A1A1A] transform rotate-1 hover:rotate-0 transition-transform"
                 >
                    <div className="absolute -top-3 -left-3 w-8 h-8 bg-coral text-white font-black flex items-center justify-center rounded-full border-[3px] border-ink shadow-[2px_2px_0_0_#1A1A1A] rotate-[-10deg]">
@@ -72,7 +88,7 @@ export default function ComputePhase({
                    </div>
                 </motion.div>
             ))}
-         </div>
+         </motion.div>
       )}
 
       {matches.length !== 1 && (

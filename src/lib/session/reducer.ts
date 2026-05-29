@@ -21,6 +21,16 @@ export function sessionReducer(state: SessionState, action: SessionAction): Sess
           }
         }
       };
+    case 'UNDO_SWIPE':
+      const playerSwipes = { ...(state.swipes[action.playerId] || {}) };
+      delete playerSwipes[action.optionId];
+      return {
+        ...state,
+        swipes: {
+          ...state.swipes,
+          [action.playerId]: playerSwipes
+        }
+      };
     case 'NEXT_PHASE':
       if (state.phase === 'SWIPE_P1') return { ...state, phase: 'HANDOFF' };
       if (state.phase === 'HANDOFF') return { ...state, phase: 'SWIPE_P2' };
@@ -44,11 +54,11 @@ export function sessionReducer(state: SessionState, action: SessionAction): Sess
     case 'START_GAME':
       return { ...state, candidateSet: action.candidateSet, phase: 'GAME' };
     case 'SELECT_GAME':
-      return { ...state, gamePlayed: action.game, candidateSet: state.matches.length > 1 ? state.matches : state.deck, phase: 'GAME' };
+      return { ...state, gamePlayed: action.game, candidateSet: state.matches.length > 1 ? state.matches : state.deck, phase: 'GAME', gameRound: 1 };
     case 'GAME_OVER':
       return { ...state, winnerId: action.winnerId, phase: 'GAME_RESULT' };
     case 'GAME_DRAW':
-      return { ...state, phase: 'GAME' }; // Loop back to game intro offering replay
+      return { ...state, phase: 'GAME', gameRound: (state.gameRound || 1) + 1 };
     case 'SET_FINAL_PICK':
       return { ...state, finalPick: action.optionId, phase: 'FINAL' };
     case 'FINISH':
