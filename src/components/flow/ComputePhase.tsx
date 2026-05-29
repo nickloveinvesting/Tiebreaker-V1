@@ -1,0 +1,121 @@
+import { useState } from 'react';
+import { motion } from 'motion/react';
+import { HelpCircle, Star, Swords, Grid3X3, Type, HelpCircle as TriviaIcon } from 'lucide-react';
+import { FoodOption, WatchItem } from '../../lib/types';
+import clsx from 'clsx';
+
+export default function ComputePhase({ 
+  matches, 
+  options, 
+  onNext 
+}: { 
+  matches: string[], 
+  options: (FoodOption | WatchItem)[], 
+  onNext: (game?: 'connect4' | 'wordle' | 'trivia') => void 
+}) {
+  const matchedItems = matches.map(id => options.find(o => o.id === id)).filter(Boolean) as (FoodOption | WatchItem)[];
+  
+  // Game selection state
+  const [selectedGame, setSelectedGame] = useState<'connect4' | 'wordle' | 'trivia'>('connect4');
+
+  return (
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="flex-1 flex flex-col p-6 overflow-y-auto"
+    >
+      <div className="flex flex-col items-center text-center mt-8 mb-8 shrink-0">
+        {matches.length === 1 ? (
+          <>
+            <Star size={64} className="text-coral mb-6 animate-pulse" />
+            <h2 className="text-4xl font-display font-black mb-4 bg-coral px-6 py-3 border-[4px] border-ink shadow-[8px_8px_0_0_#1A1A1A] rotate-2">It's a Match!</h2>
+            <p className="text-lg font-medium mt-2">You both agreed on exactly one thing.</p>
+          </>
+        ) : matches.length > 1 ? (
+          <>
+            <Swords size={64} className="text-teal mb-6" />
+            <h2 className="text-4xl font-display font-black mb-4 bg-teal px-6 py-3 border-[4px] border-ink shadow-[8px_8px_0_0_#1A1A1A] -rotate-2">Tiebreak!</h2>
+            <p className="text-lg font-medium mt-2">You matched on {matches.length} items!</p>
+          </>
+        ) : (
+           <>
+            <HelpCircle size={64} className="text-ink mb-6" />
+            <h2 className="text-4xl font-display font-black mb-4 bg-white px-6 py-3 border-[4px] border-ink shadow-[8px_8px_0_0_#1A1A1A]">No Matches</h2>
+            <p className="text-lg font-medium mt-2">You agreed on nothing. Choose a game to play for the rights to pick from the full list.</p>
+           </>
+        )}
+      </div>
+      
+      {matches.length > 0 && (
+         <div className="flex flex-col gap-4 mb-10 shrink-0 select-none pointer-events-none">
+            {matchedItems.map((item, idx) => (
+                <motion.div 
+                   key={item.id} 
+                   initial={{ scale: 0.8, opacity: 0, y: 20 }}
+                   animate={{ scale: 1, opacity: 1, y: 0 }}
+                   transition={{ delay: idx * 0.15, type: 'spring', bounce: 0.6 }}
+                   className="flex relative items-center gap-4 p-4 bg-white border-[4px] border-ink rounded-[24px] shadow-[6px_6px_0_0_#1A1A1A] transform rotate-1 hover:rotate-0 transition-transform"
+                >
+                   <div className="absolute -top-3 -left-3 w-8 h-8 bg-coral text-white font-black flex items-center justify-center rounded-full border-[3px] border-ink shadow-[2px_2px_0_0_#1A1A1A] rotate-[-10deg]">
+                     {idx + 1}
+                   </div>
+                   <div className="text-4xl bg-cream w-16 h-16 flex items-center justify-center rounded-[16px] border-[4px] border-ink shadow-[4px_4px_0_0_#1A1A1A]">
+                      {'emoji' in item ? (item as FoodOption).emoji : (item as WatchItem).posterUrl}
+                   </div>
+                   <div className="flex flex-col text-left">
+                      <span className="font-display font-black text-2xl leading-tight tracking-tight">{'title' in item ? (item as WatchItem).title : (item as FoodOption).name}</span>
+                      <span className="text-xs uppercase font-black text-ink/50 tracking-widest mt-1">{'cuisine' in item ? (item as FoodOption).cuisine : (item as WatchItem).type}</span>
+                   </div>
+                </motion.div>
+            ))}
+         </div>
+      )}
+
+      {matches.length !== 1 && (
+         <div className="mt-8 shrink-0 pb-12 w-full max-w-sm mx-auto">
+            <h3 className="font-display font-black text-2xl mb-4 text-center">Solve it with a game</h3>
+            
+            <div className="flex flex-col gap-3">
+               <button 
+                  onClick={() => setSelectedGame('connect4')}
+                  className={clsx("flex items-center gap-4 p-4 border-[4px] border-ink rounded-[24px] transition-all text-left group", selectedGame === 'connect4' ? 'bg-coral shadow-[6px_6px_0_0_#1A1A1A] translate-x-[2px] translate-y-[2px]' : 'bg-white hover:bg-black/5 opacity-70')}
+               >
+                 <Grid3X3 size={32} className={clsx(selectedGame === 'connect4' ? 'text-ink' : 'text-ink')} />
+                 <span className="font-display font-black text-xl">Connect 4</span>
+               </button>
+               <button 
+                  onClick={() => setSelectedGame('wordle')}
+                  className={clsx("flex items-center gap-4 p-4 border-[4px] border-ink rounded-[24px] transition-all text-left group", selectedGame === 'wordle' ? 'bg-teal shadow-[6px_6px_0_0_#1A1A1A] translate-x-[2px] translate-y-[2px]' : 'bg-white hover:bg-black/5 opacity-70')}
+               >
+                 <Type size={32} className={clsx(selectedGame === 'wordle' ? 'text-ink' : 'text-ink')} />
+                 <span className="font-display font-black text-xl">Wordle (1v1)</span>
+               </button>
+               <button 
+                  onClick={() => setSelectedGame('trivia')}
+                  className={clsx("flex items-center gap-4 p-4 border-[4px] border-ink rounded-[24px] transition-all text-left group", selectedGame === 'trivia' ? 'bg-[#FFEB3B] shadow-[6px_6px_0_0_#1A1A1A] translate-x-[2px] translate-y-[2px]' : 'bg-white hover:bg-black/5 opacity-70')}
+               >
+                 <TriviaIcon size={32} className={clsx(selectedGame === 'trivia' ? 'text-ink' : 'text-ink')} />
+                 <span className="font-display font-black text-xl">Tossup Trivia</span>
+               </button>
+            </div>
+         </div>
+      )}
+
+      {matches.length === 1 ? (
+        <button 
+          onClick={() => onNext()}
+          className="w-full mt-auto py-6 bg-ink text-cream font-black text-xl uppercase tracking-wider rounded-[24px] border-[4px] border-ink shadow-[8px_8px_0_0_#1A1A1A] hover:translate-x-1 hover:translate-y-1 hover:shadow-none active:translate-y-2 active:translate-x-2 active:shadow-none transition-all mb-8 shrink-0 max-w-sm mx-auto"
+        >
+          Continue
+        </button>
+      ) : (
+        <button 
+          onClick={() => onNext(selectedGame)}
+          className="w-full mt-auto py-6 bg-ink text-cream font-black text-xl uppercase tracking-wider rounded-[24px] border-[4px] border-ink shadow-[8px_8px_0_0_#1A1A1A] hover:translate-x-1 hover:translate-y-1 hover:shadow-none active:translate-y-2 active:translate-x-2 active:shadow-none transition-all mb-8 shrink-0 max-w-sm mx-auto"
+        >
+          Play {selectedGame === 'connect4' ? 'Connect 4' : selectedGame === 'wordle' ? 'Wordle' : 'Trivia'}
+        </button>
+      )}
+    </motion.div>
+  );
+}

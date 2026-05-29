@@ -1,0 +1,16 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  
+  --color-cream: #FBF7F0;
+  --color-ink: #1A1A1A;
+  --color-coral: #FF5A47;
+  --color-teal: #1FB8A6;
+}
+
+body {
+  background-color: var(--color-ink); /* The wrapper will be cream */
+}
